@@ -20,21 +20,24 @@ class DeletePerformanceWithPagingApplicationTests {
 
     @Test
     void saveMockOrderAlimTalkData() {
-        String sql = "INSERT INTO ORDER_KAKAO_TALK(message_type, sender_key, template_code, phone_number, message, req_date) "
-                +"VALUES(:messageType, :senderKey, :templateCode, :phoneNumber, :message, :reqDate)";
+        String sql = "INSERT INTO ORDER_KAKAO_TALK(ID,message_type, sender_key, template_code, phone_number, message, req_date) "
+                +"VALUES(:id,:messageType, :senderKey, :templateCode, :phoneNumber, :message, :reqDate)";
         int minusDays = 367;
+        LocalDateTime toDeleteDate = LocalDateTime.now();
+        Long id = 1L;
 
         for (int i = 1;i <= 365;i++) {
             List<MapSqlParameterSource> batchArgs = new ArrayList<>();
 
             for (int j = 0;j<ORDER_DAILY_RECORDS;j++) {
                 MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+                mapSqlParameterSource.addValue("id",id+=1);
                 mapSqlParameterSource.addValue("messageType", "AT");
                 mapSqlParameterSource.addValue("senderKey", UUID.randomUUID().toString());
                 mapSqlParameterSource.addValue("templateCode", "temp_code");
                 mapSqlParameterSource.addValue("phoneNumber", "01011112222");
                 mapSqlParameterSource.addValue("message", "message for testing alimtalk log deletion performance");
-                mapSqlParameterSource.addValue("reqDate", LocalDateTime.now().minusDays(minusDays-(i+1)));
+                mapSqlParameterSource.addValue("reqDate", toDeleteDate.minusDays(minusDays-(i+1)));
 
                 batchArgs.add(mapSqlParameterSource);
 
@@ -48,21 +51,24 @@ class DeletePerformanceWithPagingApplicationTests {
 
     @Test
     void saveMockReservationAlimTalkData() {
-        String sql = "INSERT INTO RESERVATION_KAKAO_TALK(message_type, sender_key, template_code, phone_number, message, req_date) "
-                +"VALUES(:messageType, :senderKey, :templateCode, :phoneNumber, :message, :reqDate)";
+        String sql = "INSERT INTO RESERVATION_KAKAO_TALK(ID,message_type, sender_key, template_code, phone_number, message, req_date) "
+                +"VALUES(:id,:messageType, :senderKey, :templateCode, :phoneNumber, :message, :reqDate)";
         int minusDays = 367;
+        LocalDateTime toDeleteDate = LocalDateTime.now();
+        Long id = 1L;
 
         for (int i = 1;i <= 365;i++) {
             List<MapSqlParameterSource> batchArgs = new ArrayList<>();
 
             for (int j = 0; j<RESERVATION_DAILY_RECORDS;j++) {
                 MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+                mapSqlParameterSource.addValue("id",id+=1);
                 mapSqlParameterSource.addValue("messageType", "AT");
                 mapSqlParameterSource.addValue("senderKey", UUID.randomUUID().toString());
                 mapSqlParameterSource.addValue("templateCode", "temp_code");
                 mapSqlParameterSource.addValue("phoneNumber", "01011112222");
                 mapSqlParameterSource.addValue("message", "message for testing alimtalk log deletion performance");
-                mapSqlParameterSource.addValue("reqDate", LocalDateTime.now().minusDays(minusDays-(i+1)));
+                mapSqlParameterSource.addValue("reqDate", toDeleteDate.minusDays(minusDays-(i+1)));
 
                 batchArgs.add(mapSqlParameterSource);
 

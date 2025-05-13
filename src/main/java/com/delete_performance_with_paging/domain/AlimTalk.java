@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Builder
 public class AlimTalk {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "message_type", nullable = false, length = 2)

@@ -13,6 +13,6 @@ public interface OrderAlimTalkRepository extends JpaRepository<OrderAlimTalk,Lon
     @Query(value = "select o.id from OrderAlimTalk o where o.reqDate < :reqDate")
     Slice<Long> findOrderAlimTalkByOffset(@Param("reqDate")LocalDateTime reqDate, Pageable pageable);
 
-    @Query(value = "select o.id from OrderAlimTalk o where o.id > :id and o.reqDate < :reqDate")
+    @Query(value = "select o.id from OrderAlimTalk o where o.reqDate < :reqDate and o.id > :id order by o.id")
     Slice<Long> findOrderAlimTalkByKeySet(@Param("id") Long id,@Param("reqDate") LocalDateTime reqDate,Pageable pageable);
 }
