@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -23,13 +22,13 @@ public class AlimTalkDeletionSchedulerWithKeySet {
 
     private final int ELEMENT_SIZE = 1000;
 
-    @Scheduled(fixedDelay = Long.MAX_VALUE,initialDelay = 2000)
+    //@Scheduled(fixedDelay = Long.MAX_VALUE,initialDelay = 2000)
     public void deleteLogWithKeySet() {
         log.info("[ Scheduler ] AlimTalkDeletionScheduler has been started");
         Pageable pageable = PageRequest.of(0,ELEMENT_SIZE);
 
         LocalDateTime deletionDate = LocalDateTime.now().minusYears(1);
-        Slice<Long> orderAlimTalkIdSlice = orderAlimTalkRepository.findOrderAlimTalkByOffset(deletionDate,pageable);
+        Slice<Long> orderAlimTalkIdSlice = orderAlimTalkRepository.findOrderAlimTalkByKeySet(null,deletionDate,pageable);
 
         int orderAlimTalkDeleteCount = 0;
         while (!orderAlimTalkIdSlice.getContent().isEmpty()) {
@@ -39,7 +38,7 @@ public class AlimTalkDeletionSchedulerWithKeySet {
             orderAlimTalkIdSlice = orderAlimTalkRepository.findOrderAlimTalkByKeySet(lastId,deletionDate,pageable);
         }
 
-        Slice<Long> reservationAlimTalkIdSlice = reservationAlimTalkRepository.findReservationAlimTalkByOffset(deletionDate,pageable);
+        Slice<Long> reservationAlimTalkIdSlice = reservationAlimTalkRepository.findReservationAlimTalkByKeySet(null,deletionDate,pageable);
 
         int reservationAlimTalkCount = 0;
         while (!reservationAlimTalkIdSlice.getContent().isEmpty()) {

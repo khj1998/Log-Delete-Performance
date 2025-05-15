@@ -13,6 +13,7 @@ public interface ReservationAlimTalkRepository extends JpaRepository<Reservation
     @Query(value = "select r.id from ReservationAlimTalk r where r.reqDate < :reqDate")
     Page<Long> findReservationAlimTalkByOffset(@Param("reqDate") LocalDateTime reqDate, Pageable pageable);
 
-    @Query(value = "select r.id from ReservationAlimTalk r where r.reqDate < :reqDate and r.id > :id order by r.id")
+    @Query(value = "select r.id from ReservationAlimTalk r where (:id is null or r.id > :id) " +
+            "and r.reqDate < :reqDate order by r.id")
     Page<Long> findReservationAlimTalkByKeySet(@Param("id") Long id,@Param("reqDate") LocalDateTime reqDate,Pageable pageable);
 }
