@@ -19,9 +19,9 @@ public class AlimTalkDeletionSchedulerWithOffset {
     private final OrderAlimTalkRepository orderAlimTalkRepository;
     private final ReservationAlimTalkRepository reservationAlimTalkRepository;
 
-    private final int ELEMENT_SIZE = 1000;
+    private final int ELEMENT_SIZE = 500;
 
-    @Scheduled(fixedDelay = Long.MAX_VALUE,initialDelay = 2000)
+    //@Scheduled(fixedDelay = Long.MAX_VALUE,initialDelay = 2000)
     public void deleteLogWithOffset() {
         log.info("[ Scheduler ] AlimTalkDeletionScheduler has been started");
         Pageable pageable = PageRequest.of(0,ELEMENT_SIZE);

@@ -14,6 +14,6 @@ public interface OrderAlimTalkRepository extends JpaRepository<OrderAlimTalk,Lon
     Slice<Long> findOrderAlimTalkByOffset(@Param("reqDate")LocalDateTime reqDate, Pageable pageable);
 
     @Query(value = "select o.id from OrderAlimTalk o where (:id is null or o.id > :id) " +
-            "and o.reqDate < :reqDate order by o.id")
+            "and o.reqDate < :reqDate")
     Slice<Long> findOrderAlimTalkByKeySet(@Param("id") Long id,@Param("reqDate") LocalDateTime reqDate,Pageable pageable);
 }

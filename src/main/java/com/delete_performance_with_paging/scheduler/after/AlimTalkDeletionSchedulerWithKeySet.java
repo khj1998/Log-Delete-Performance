@@ -22,7 +22,7 @@ public class AlimTalkDeletionSchedulerWithKeySet {
 
     private final int ELEMENT_SIZE = 1000;
 
-    //@Scheduled(fixedDelay = Long.MAX_VALUE,initialDelay = 2000)
+    @Scheduled(fixedDelay = Long.MAX_VALUE,initialDelay = 2000)
     public void deleteLogWithKeySet() {
         log.info("[ Scheduler ] AlimTalkDeletionScheduler has been started");
         Pageable pageable = PageRequest.of(0,ELEMENT_SIZE);

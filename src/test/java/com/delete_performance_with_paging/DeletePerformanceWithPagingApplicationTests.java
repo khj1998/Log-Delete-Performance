@@ -3,9 +3,9 @@ package com.delete_performance_with_paging;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -20,62 +20,74 @@ class DeletePerformanceWithPagingApplicationTests {
 
     @Test
     void saveMockOrderAlimTalkData() {
-        String sql = "INSERT INTO ORDER_KAKAO_TALK(ID,message_type, sender_key, template_code, phone_number, message, req_date) "
-                +"VALUES(:id,:messageType, :senderKey, :templateCode, :phoneNumber, :message, :reqDate)";
+        StringBuilder sql = new StringBuilder("INSERT INTO ORDER_KAKAO_TALK (ID, message_type, sender_key, template_code, phone_number, message, req_date) VALUES ");
         int minusDays = 367;
         LocalDateTime toDeleteDate = LocalDateTime.now();
         Long id = 1L;
+        List<Object> params = new ArrayList<>();
 
-        for (int i = 1;i <= 365;i++) {
-            List<MapSqlParameterSource> batchArgs = new ArrayList<>();
+        for (int i = 1; i <= 365; i++) {
+            List<String> valueClauses = new ArrayList<>();
+            params.clear();
 
-            for (int j = 0;j<ORDER_DAILY_RECORDS;j++) {
-                MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-                mapSqlParameterSource.addValue("id",id+=1);
-                mapSqlParameterSource.addValue("messageType", "AT");
-                mapSqlParameterSource.addValue("senderKey", UUID.randomUUID().toString());
-                mapSqlParameterSource.addValue("templateCode", "temp_code");
-                mapSqlParameterSource.addValue("phoneNumber", "01011112222");
-                mapSqlParameterSource.addValue("message", "message for testing alimtalk log deletion performance");
-                mapSqlParameterSource.addValue("reqDate", toDeleteDate.minusDays(minusDays-(i+1)));
+            for (int j = 0; j < ORDER_DAILY_RECORDS; j++) {
+                valueClauses.add("(?, ?, ?, ?, ?, ?, ?)");
+                params.add(id++);
+                params.add("AT");
+                params.add(UUID.randomUUID().toString());
+                params.add("temp_code");
+                params.add("01011112222");
+                params.add("message for testing alimtalk log deletion performance");
+                params.add(Timestamp.valueOf(toDeleteDate.minusDays(minusDays - (i + 1))));
 
-                batchArgs.add(mapSqlParameterSource);
-
-                if (batchArgs.size() == BATCH_SIZE) {
-                    namedParameterJdbcTemplate.batchUpdate(sql,batchArgs.toArray(new MapSqlParameterSource[0]));
-                    batchArgs.clear();
+                if (valueClauses.size() == BATCH_SIZE) {
+                    String finalSql = sql + String.join(",", valueClauses);
+                    namedParameterJdbcTemplate.getJdbcTemplate().update(finalSql, params.toArray());
+                    valueClauses.clear();
+                    params.clear();
                 }
+            }
+
+            if (!valueClauses.isEmpty()) {
+                String finalSql = sql + String.join(",", valueClauses);
+                namedParameterJdbcTemplate.getJdbcTemplate().update(finalSql, params.toArray());
             }
         }
     }
 
     @Test
     void saveMockReservationAlimTalkData() {
-        String sql = "INSERT INTO RESERVATION_KAKAO_TALK(ID,message_type, sender_key, template_code, phone_number, message, req_date) "
-                +"VALUES(:id,:messageType, :senderKey, :templateCode, :phoneNumber, :message, :reqDate)";
+        StringBuilder sql = new StringBuilder("INSERT INTO RESERVATION_KAKAO_TALK (ID, message_type, sender_key, template_code, phone_number, message, req_date) VALUES ");
         int minusDays = 367;
         LocalDateTime toDeleteDate = LocalDateTime.now();
         Long id = 1L;
+        List<Object> params = new ArrayList<>();
 
-        for (int i = 1;i <= 365;i++) {
-            List<MapSqlParameterSource> batchArgs = new ArrayList<>();
+        for (int i = 1; i <= 365; i++) {
+            List<String> valueClauses = new ArrayList<>();
+            params.clear();
 
-            for (int j = 0; j<RESERVATION_DAILY_RECORDS;j++) {
-                MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-                mapSqlParameterSource.addValue("id",id+=1);
-                mapSqlParameterSource.addValue("messageType", "AT");
-                mapSqlParameterSource.addValue("senderKey", UUID.randomUUID().toString());
-                mapSqlParameterSource.addValue("templateCode", "temp_code");
-                mapSqlParameterSource.addValue("phoneNumber", "01011112222");
-                mapSqlParameterSource.addValue("message", "message for testing alimtalk log deletion performance");
-                mapSqlParameterSource.addValue("reqDate", toDeleteDate.minusDays(minusDays-(i+1)));
+            for (int j = 0; j < RESERVATION_DAILY_RECORDS; j++) {
+                valueClauses.add("(?, ?, ?, ?, ?, ?, ?)");
+                params.add(id++);
+                params.add("AT");
+                params.add(UUID.randomUUID().toString());
+                params.add("temp_code");
+                params.add("01011112222");
+                params.add("message for testing alimtalk log deletion performance");
+                params.add(Timestamp.valueOf(toDeleteDate.minusDays(minusDays - (i + 1))));
 
-                batchArgs.add(mapSqlParameterSource);
-
-                if (batchArgs.size()==BATCH_SIZE) {
-                    namedParameterJdbcTemplate.batchUpdate(sql,batchArgs.toArray(new MapSqlParameterSource[0]));
-                    batchArgs.clear();
+                if (valueClauses.size() == BATCH_SIZE) {
+                    String finalSql = sql + String.join(",", valueClauses);
+                    namedParameterJdbcTemplate.getJdbcTemplate().update(finalSql, params.toArray());
+                    valueClauses.clear();
+                    params.clear();
                 }
+            }
+
+            if (!valueClauses.isEmpty()) {
+                String finalSql = sql + String.join(",", valueClauses);
+                namedParameterJdbcTemplate.getJdbcTemplate().update(finalSql, params.toArray());
             }
         }
     }
