@@ -22,7 +22,7 @@ public class AlimTalkDeletionSchedulerWithKeySet {
 
     private final int ELEMENT_SIZE = 1000;
 
-    //@Scheduled(fixedDelay = Long.MAX_VALUE,initialDelay = 2000)
+    @Scheduled(fixedDelay = Long.MAX_VALUE,initialDelay = 2000)
     public void deleteLogWithKeySet() {
         log.info("[ Scheduler ] AlimTalkDeletionScheduler has been started");
         Pageable pageable = PageRequest.of(0,ELEMENT_SIZE);
@@ -35,7 +35,7 @@ public class AlimTalkDeletionSchedulerWithKeySet {
             Long lastId = getLastId(orderAlimTalkIdSlice.getContent());
             orderAlimTalkRepository.deleteAllByIdInBatch(orderAlimTalkIdSlice.getContent());
             orderAlimTalkDeleteCount += orderAlimTalkIdSlice.getSize();
-            orderAlimTalkIdSlice = orderAlimTalkRepository.findOrderAlimTalkByKeySet(lastId,deletionDate,pageable);
+            orderAlimTalkIdSlice = orderAlimTalkRepository.findOrderAlimTalkByKeySet(lastId+ELEMENT_SIZE,deletionDate,pageable);
         }
 
         Slice<Long> reservationAlimTalkIdSlice = reservationAlimTalkRepository.findReservationAlimTalkByKeySet(null,deletionDate,pageable);
@@ -45,7 +45,7 @@ public class AlimTalkDeletionSchedulerWithKeySet {
             Long lastId = getLastId(reservationAlimTalkIdSlice.getContent());
             reservationAlimTalkRepository.deleteAllByIdInBatch(reservationAlimTalkIdSlice.getContent());
             reservationAlimTalkCount += reservationAlimTalkIdSlice.getSize();
-            reservationAlimTalkIdSlice = reservationAlimTalkRepository.findReservationAlimTalkByKeySet(lastId,deletionDate,pageable);
+            reservationAlimTalkIdSlice = reservationAlimTalkRepository.findReservationAlimTalkByKeySet(lastId+ELEMENT_SIZE,deletionDate,pageable);
         }
 
         log.info("[ Scheduler ] AlimTalkDeletionScheduler has been ended, deleted count - ORDER : {}, RESERVATION : {}"
